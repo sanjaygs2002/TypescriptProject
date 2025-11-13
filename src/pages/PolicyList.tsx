@@ -8,10 +8,19 @@ import "./PolicyList.css";
 const PolicyList = () => {
   const { user, buyPolicy } = useAuth();
   const [policies] = useState<Policy[]>(() => policiesData as Policy[]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedPolicy, setSelectedPolicy] = useState<string>("");
+
+  const handleBuyPolicy = (policy: Policy) => {
+    buyPolicy(policy);
+    setSelectedPolicy(policy.name);
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3000); // hide after 3 sec
+  };
 
   return (
     <div className="policy-container">
-   
+      {/* Hero Section */}
       <section className="hero-section">
         <img src={insuranceBanner} alt="Insurance Banner" className="hero-image" />
         <div className="hero-overlay">
@@ -22,7 +31,7 @@ const PolicyList = () => {
         </div>
       </section>
 
-     
+      {/* Policies Section */}
       <section className="policies-section">
         <h2 className="section-title">Available Insurance Policies</h2>
         <div className="policy-grid">
@@ -35,7 +44,7 @@ const PolicyList = () => {
               <p className="policy-desc">{policy.description}</p>
 
               {user ? (
-                <button onClick={() => buyPolicy(policy)} className="buy-btn">
+                <button onClick={() => handleBuyPolicy(policy)} className="buy-btn">
                   Buy Policy
                 </button>
               ) : (
@@ -45,6 +54,15 @@ const PolicyList = () => {
           ))}
         </div>
       </section>
+
+      {/* Success Popup */}
+      {showPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            ✅ Successfully purchased <strong>{selectedPolicy}</strong>!
+          </div>
+        </div>
+      )}
     </div>
   );
 };
